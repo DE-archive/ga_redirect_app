@@ -11,6 +11,8 @@ class RedirectController < ApplicationController
   end
 
   def collect
+    Rails.logger.info request.remote_ip
+    Rails.logger.info x_forwarded_for_header
     HTTParty.get 'https://google-analytics.com/collect', query: collect_params, headers: x_forwarded_for_header
     render text: 'ok'
   end
@@ -22,10 +24,10 @@ class RedirectController < ApplicationController
 
   private
   def collect_params
-    params.permit(:v, :_v, :a, :t, :_s, :dl, :ul, :de, :dt, :sd, :sr, :vp, :je, :fl, :_u, :jid, :cid, :tid, :z).to_h
+    params.permit(:v, :_v, :a, :t, :_s, :dl, :ul, :de, :dt, :sd, :sr, :vp, :je, :fl, :_u, :jid, :cid, :tid, :z, :_r).to_h
   end
 
   def x_forwarded_for_header
-    {'X-Forwarded-For': request.remote_ip}
+    {'X-Forwarded-For' => request.remote_ip}
   end
 end
